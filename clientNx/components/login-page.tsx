@@ -1,42 +1,54 @@
-"use client"
+"use client";
 
-import type React from "react"
-
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Checkbox } from "@/components/ui/checkbox"
-import { AlertCircle } from "lucide-react"
+import type React from "react";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
+import { AlertCircle } from "lucide-react";
+import axios from "axios";  // 加入 axios
 
 interface LoginPageProps {
-  onLogin: (loginName: string, password: string) => void
+  onLogin: (loginName: string, password: string) => void;
 }
 
 export default function LoginPage({ onLogin }: LoginPageProps) {
-  const [loginName, setLoginName] = useState("")
-  const [password, setPassword] = useState("")
-  const [isRobot, setIsRobot] = useState(false)
-  const [error, setError] = useState("")
+  const [loginName, setLoginName] = useState("");
+  const [password, setPassword] = useState("");
+  const [isRobot, setIsRobot] = useState(false);
+  const [error, setError] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
 
     if (!loginName || !password) {
-      setError("請填寫所有必填欄位")
-      return
+      setError("請填寫所有必填欄位");
+      return;
     }
 
     if (!isRobot) {
-      setError("請確認您不是機器人")
-      return
+      setError("請確認您不是機器人");
+      return;
     }
 
-    onLogin(loginName, password)
-  }
+    try {
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/login`,  // 用環境變數
+        { loginName, password }
+      );
+      if (response.data.success) {
+        onLogin(loginName, password);  // 成功後調用 onLogin
+      } else {
+        setError("登入失敗，請檢查帳號或密碼");
+      }
+    } catch (err) {
+      setError("伺服器錯誤，請稍後再試");
+    }
+  };
 
   const handleGoogleLogin = () => {
-    alert("Google 登入功能尚未實現")
-  }
+    alert("Google 登入功能尚未實現");
+  };
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-white p-4">
@@ -74,7 +86,11 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
             </Button>
 
             <div className="flex items-center space-x-2">
-              <Checkbox id="robot" checked={isRobot} onCheckedChange={(checked) => setIsRobot(checked as boolean)} />
+              <Checkbox
+                id="robot"
+                checked={isRobot}
+                onCheckedChange={(checked) => setIsRobot(checked as boolean)}
+              />
               <label
                 htmlFor="robot"
                 className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
@@ -86,7 +102,7 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
 
           {error && (
             <div className="flex items-center text-red-500 text-sm">
-              <AlertCircle className="h-4 w-4 mr-1" />
+              <AlertCircle className="clientNx4 w-4 mr-1" />
               <span>{error}</span>
             </div>
           )}
@@ -100,6 +116,5 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
         </form>
       </div>
     </div>
-  )
+  );
 }
-
