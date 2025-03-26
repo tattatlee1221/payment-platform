@@ -46,9 +46,6 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
     }
   };
 
-  const handleGoogleLogin = () => {
-    alert("Google 登入功能尚未實現");
-  };
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-white p-4">
@@ -77,13 +74,6 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
               />
             </div>
 
-            <Button
-              type="button"
-              onClick={handleGoogleLogin}
-              className="w-full bg-blue-600 hover:bg-blue-500 text-white transition-all duration-200 transform hover:scale-[1.02]"
-            >
-              Google 登入
-            </Button>
 
             <div className="flex items-center space-x-2">
               <Checkbox
